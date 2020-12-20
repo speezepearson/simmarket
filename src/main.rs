@@ -11,7 +11,6 @@ Try imposing a price floor (or cap) and check whether what we get is readily rel
 Try the above for both binding and non-binding floor (cap).
 */
 
-// extern crate rand;
 use rand::Rng;
 use rand::rngs::StdRng;
 use rand::distributions::{Distribution, Uniform};
