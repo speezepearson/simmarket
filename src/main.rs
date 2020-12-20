@@ -194,7 +194,6 @@ struct Order {
   
   typ: OrderType,
 
-  amount_a: f64,
   price_per_a_in_b: f64,
 }
 
@@ -204,7 +203,6 @@ fn generate_orders(agent_id: AgentId, agent: &Agent, balance: &Balance) -> (Opti
       Some(Order {
         agent_id: agent_id,
         typ: OrderType::Bid,
-        amount_a: balance.b / agent.indifference_price_of_a_in_b(),
         price_per_a_in_b: agent.indifference_price_of_a_in_b(),
       })
     } else {
@@ -217,7 +215,6 @@ fn generate_orders(agent_id: AgentId, agent: &Agent, balance: &Balance) -> (Opti
       Some(Order {
         agent_id: agent_id,
         typ: OrderType::Ask,
-        amount_a: balance.a,
         price_per_a_in_b: agent.indifference_price_of_a_in_b(),
       })
     } else {
