@@ -47,6 +47,9 @@ fn main() {
     );
   }
 
+  for (price, supply, demand) in supply_demand_curves(&assets) {
+    println!(r#"[ {}, {{ "supply":{}, "demand":{} }}]"#, price, supply, demand);
+  }
   execute_all_trades(&mut assets);
 
   println!("done with main");
@@ -338,4 +341,28 @@ fn sanity_check_endpoint(assets: &Vec<(Agent, Balance)>) {
   //   println!("  ({}, {}, {}), {:?}", agent.indifference_price_of_a_in_b(), balance.a, balance.b, agent);
   // }
   assert!(remainder.is_empty(), "{:?} ({} elems)", remainder, remainder.len());
+}
+
+type Price = f64;
+fn supply_demand_curves(assets: &Vec<(Agent, Balance)>) -> Vec<(Price, f64, f64)> {
+  let mut interesting_prices: Vec<f64> = assets.iter().map(|(agent, _)| agent.indifference_price_of_a_in_b()).collect();
+  interesting_prices.sort_by(|a, b| a.partial_cmp(b).unwrap());
+
+  let mut result = vec![];
+  for discontinuity_price in interesting_prices {
+    let eps = 2_f64.powf(-30.0);
+    for price in vec![discontinuity_price*(1.0-eps), discontinuity_price*(1.0+eps)] {
+      let supply = assets.iter().map(|(agent, balance)| if agent.indifference_price_of_a_in_b() > price {0.0} else {balance.a        }).sum();
+      let demand = assets.iter().map(|(agent, balance)| if agent.indifference_price_of_a_in_b() < price {0.0} else {balance.b / price}).sum();
+      result.push((price, supply, demand));
+    }
+  }
+
+  // sanity check
+  for i in 1..result.len() {
+    assert!(result[i].1 >= result[i-1].1, "{:?} -> {:?}", result[i-1], result[i]);
+    assert!(result[i].2 <= result[i-1].2, "{:?} -> {:?}", result[i-1], result[i]);
+  }
+
+  result
 }
