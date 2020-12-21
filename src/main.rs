@@ -11,7 +11,6 @@ Try imposing a price floor (or cap) and check whether what we get is readily rel
 Try the above for both binding and non-binding floor (cap).
 */
 
-// extern crate rand;
 use rand::Rng;
 use rand::rngs::StdRng;
 use rand::distributions::{Distribution, Uniform};
@@ -198,7 +197,6 @@ struct Order {
   
   typ: OrderType,
 
-  amount_a: f64,
   price_per_a_in_b: f64,
 }
 
@@ -208,7 +206,6 @@ fn generate_orders(agent_id: AgentId, agent: &Agent, balance: &Balance) -> (Opti
       Some(Order {
         agent_id: agent_id,
         typ: OrderType::Bid,
-        amount_a: balance.b / agent.indifference_price_of_a_in_b(),
         price_per_a_in_b: agent.indifference_price_of_a_in_b(),
       })
     } else {
@@ -221,7 +218,6 @@ fn generate_orders(agent_id: AgentId, agent: &Agent, balance: &Balance) -> (Opti
       Some(Order {
         agent_id: agent_id,
         typ: OrderType::Ask,
-        amount_a: balance.a,
         price_per_a_in_b: agent.indifference_price_of_a_in_b(),
       })
     } else {
